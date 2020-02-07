@@ -1,5 +1,7 @@
 package AmazonOrderHistoryPages;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -35,8 +37,9 @@ import Utils.Constants;
 	 
 	 //For Filter searchtext
 	 @FindBy(xpath="//span[@class=\"num-orders\"]")private WebElement SearchResultForFilter;
-	 
-	 public SearchOrderResults(WebDriver driver) 
+	  static final Logger logger = LogManager.getLogger(SearchOrderResults.class);
+	
+	  public SearchOrderResults(WebDriver driver) 
 		
 		{ 
 			this.driver=driver;

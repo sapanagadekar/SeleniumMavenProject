@@ -3,6 +3,9 @@ package AmazonOrderHistoryPages;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -10,11 +13,15 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.Select;
 
+
 import Utils.TakeScreenshots;
 @SuppressWarnings("unused") 
 public class HomePage {
 	
  private WebDriver driver;
+ 
+ String encodedpwd = "UGFzc3dvcmQ=";
+ 
  //TakeScreenshots TS;
  //WebElemnts for testcase1 -Login
   @FindBy(id="nav-orders")private WebElement Orderlink;
@@ -34,7 +41,7 @@ public class HomePage {
    @FindBy(id="searchOrdersInput")private WebElement SearchOrderInput;
   // @FindBy(id="//*[@id=\"a-autoid-0\"]/span/input")private WebElement SearchOrderButton;
   
-	
+   private static final Logger logger = LogManager.getLogger(HomePage.class);
    
   public HomePage(WebDriver driver) 
 	
@@ -51,16 +58,22 @@ public class HomePage {
 		TakeScreenshots.CaptureScreenshots(driver, "TC001_01_Click On OrderLink");	
 		
 		Thread.sleep(1500);
+		logger.info("Click on OrderLink");
 		Orderlink.click();
 		
-		UserName.sendKeys("9890606666");
+    	UserName.sendKeys("psarika.26@gmail.com");
+		logger.info("Enter UserName");
+		//UserName.sendKeys("9890606666");
 		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);		
 	    Continuebutton.click();
 	    
-		Password.sendKeys("Swayam@2018");
+	    logger.info("Enter Password");
+		Password.sendKeys("Amazon@123");
+	   // Password.sendKeys("Swayam@2018");
 		
-		TakeScreenshots.CaptureScreenshots(driver, "TC001_02_Click On Login Button");	
-		SubmitButton.click();
+		TakeScreenshots.CaptureScreenshots(driver, "TC001_02_Click On Login Button");
+		 logger.info("Click On Submit Button");
+		 SubmitButton.click();
 			
 	
 		
@@ -90,6 +103,7 @@ public class HomePage {
 	public void SearchOrder(String OrderText) {
 		
 		 System.out.println("Enter Orderdetails");
+		 logger.info("Enter Orderdetails");
 		 SearchOrderInput.clear();	
 		 SearchOrderInput.sendKeys(OrderText + Keys.ENTER);
 		 
@@ -99,13 +113,14 @@ public class HomePage {
 	public void incorrectsearch() {
 		
 		System.out.println("Enter incorrect text");
+		logger.info("Enter incorrect text");
 		 SearchOrderInput.sendKeys("@#$%"+ Keys.ENTER);
 		 
 		 
 	 }
 	
 	public void YourOrdersPage() {
-						
+		logger.info("Click OrderLink");				
 		Orderlink.click();
 	}
 	

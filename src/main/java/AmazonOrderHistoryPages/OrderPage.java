@@ -1,6 +1,8 @@
 package AmazonOrderHistoryPages;
 
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -20,8 +22,8 @@ public class OrderPage {
 
 	  @FindBy(xpath="//Select[@id=\"orderFilter\"]")private WebElement Orderdropdown;
 	  
-	  //Buyitagain Button
-	  @FindBy(xpath="//input[@aria-labelledby=\"a-autoid-3-announce\"]")private WebElement BuyAgainButton;
+	  //Buyitagain Button a-autoid-3-announce
+	  @FindBy(xpath="//*[@id=\"a-autoid-3-announce\"]")private WebElement BuyAgainButton;
 	 
 	  //BuyNow
 	  @FindBy(xpath="//input[@aria-label=\"Buy Now\"]")private WebElement BuyNowButton;
@@ -32,6 +34,7 @@ public class OrderPage {
 	  @FindBy(xpath="//h1[contains(text(),\"Added to Cart\")]")private WebElement AddtoCartResultText;
 	   @FindBy(id="searchOrdersInput")private WebElement SearchOrderInput;
 	
+	   private static final Logger logger = LogManager.getLogger(OrderPage.class);
 	  public OrderPage(WebDriver driver) 
 		
 		{ 
@@ -43,6 +46,7 @@ public class OrderPage {
 	  //Select year from Dropdown
 	  public void Orderfilter() {
 			//TS= new TakeScreenshots();
+		  logger.info("Select 2018 from dropdown");
 			Select dropdown = new Select(Orderdropdown);
 			
 			dropdown.selectByVisibleText("2018");
@@ -52,12 +56,14 @@ public class OrderPage {
 	  
 	  public void ClearSearch() {
 			//TS= new TakeScreenshots();
+		  logger.info("Clear search output ");
 		    SearchOrderInput.clear();
 	  }
 	  
 	  public void Orderfilter2(String Filter) {
 			//TS= new TakeScreenshots();
 		   // SearchOrderInput.clear();
+		  logger.info("Clear search output " + Filter );
 			Select dropdown = new Select(Orderdropdown);
 			dropdown.selectByVisibleText(Filter);
 		
@@ -74,6 +80,7 @@ public class OrderPage {
 			TakeScreenshots.CaptureScreenshots(driver, "TC006_01_ Click On Buy Again button");
 			BuyAgainButton.click();
 			System.out.println("Click on Add to Cart Button");
+			
 			WebDriverWait waitAddtoCartBt = new WebDriverWait(driver, 100);
 
 			waitAddtoCartBt.until(ExpectedConditions.visibilityOf(AddtoCartButton));

@@ -2,6 +2,15 @@ package AmazonOrderHistoryTest;
 
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
+
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.aventstack.extentreports.reporter.configuration.ChartLocation;
+import com.aventstack.extentreports.reporter.configuration.Theme;
+
 import org.testng.annotations.BeforeClass;
 
 import org.testng.annotations.Test;
@@ -14,30 +23,43 @@ import java.util.concurrent.TimeUnit;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 //import org.apache.log4j.Logger;
-//import org.apache.logging.log4j.Logger;
-//import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
-import org.apache.log4j.xml.DOMConfigurator;
+
 
 @SuppressWarnings("unused") 
 public class OrderHistoryTest {
     WebDriver driver;
+    
+    //For Logger
+    private static final Logger logger = LogManager.getLogger(OrderHistoryTest.class);
+    
+ //  For Html reports
+    ExtentHtmlReporter htmlReports;
+    ExtentReports extent;
+    ExtentTest test;
+    
+    
+    //Page objects
     SearchOrderResults SOR;
     HomePage HP ;
-  
     OrderPage OP;
+    //Screnshots variable
     int ScreenShotNum;
     
-    //public static Logger Log = Logger.getLogger(OrderHistoryTest.class.getName());
-//    private static final Logger logger = LogManager.getLogger(OrderHistoryTest.class);
+   
     
   @BeforeClass
   public void BrowserSetUp(){
@@ -47,19 +69,38 @@ public class OrderHistoryTest {
 	 driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 	 driver.get("https://www.amazon.in");
 	 driver.manage().window().maximize();
+	 driver.manage().deleteAllCookies();
+	 System.out.println("Browser setup done");
+ 
 	 
-	System.out.println("Browser setup done");
+	 String currentDirectory = System.getProperty("user.dir");
+	 String filename =currentDirectory+ "\\test-output\\htmlreport.html"   ;
+				
+  	 htmlReports = new ExtentHtmlReporter(filename);
+	 extent = new ExtentReports();
+	 extent.attachReporter(htmlReports);
+	 htmlReports.config().setReportName("AmazonOrderHistoryReport");
+	 htmlReports.config().setTheme(Theme.STANDARD);
+	 htmlReports.config().setTestViewChartLocation(ChartLocation.TOP);
+	 extent.setSystemInfo("OperatingSystem", "Windows7");
+	 extent.setSystemInfo("Browser", "Chrome");
+	 extent.setSystemInfo("Application", "AmazonOrderHistory");
+	 extent.setSystemInfo("Envoirnment", "Prod");
+	 System.out.println("Report setup done");
+	
          }
   
     
   @BeforeMethod
   public void TextCasesStarted(){
-	  System.out.println("***** Text Cases Started*****");
+	  System.out.println("***** Text Cases Started*****" );
   }
+  
   
   @Test(priority=1)
   public void YourOrdersTest() throws InterruptedException {
-   System.out.println("To Check user can aceess Order History through Order link from home page");
+   System.out.println("TC001_To Check user can aceess Order History through Order link from home page");
+   test=extent.createTest("TC001_To Check user can aceess Order History through Order link from home page");
     HP =new HomePage(driver); 
     HP.LoginthroughOrderlink();
     String PageTitle=driver.getTitle();
@@ -72,7 +113,8 @@ public class OrderHistoryTest {
   
   @Test(priority=2)
   public void AvailableTabsTest() {
-	  System.out.println("To Check available tabs on Your orders page");
+	  System.out.println("TC002_To Check available tabs on Your orders page");
+	  test=extent.createTest("TC002_To Check available tabs on Your orders page");
 	  HP =new HomePage(driver);
 	  String[] TabNames = HP.Tabs();
 	 // TS= new TakeScreenshots();
@@ -85,7 +127,8 @@ public class OrderHistoryTest {
   @Test(priority=4,dataProvider="SearchOrder")
   public void SearchProductTest(String OrderText, String ExpectedText, String RunMode)
     {
-      System.out.println("To search orders using diffrent search criteria");
+      System.out.println("TC004_To search orders using diffrent search criteria" + "_" + OrderText);
+      test=extent.createTest("TC004_To search orders using diffrent search criteria"+ "_" +OrderText);
       HP =new HomePage(driver);
       HP.SearchOrder(OrderText);
       SOR = new SearchOrderResults(driver);
@@ -102,7 +145,8 @@ public class OrderHistoryTest {
   @Test(priority=3)
   public void SearchProductTestForincorrecttext()
      {
-      System.out.println("To search orders using incorrect search criteria");
+      System.out.println("TC003_To search orders using incorrect search criteria");
+      test=extent.createTest("TC003_To search orders using incorrect search criteria");
       HP = new HomePage(driver);
       SOR = new SearchOrderResults(driver);
       HP.incorrectsearch();
@@ -117,7 +161,8 @@ public class OrderHistoryTest {
  @Test(priority=7)
  public void BuyNowTest() {
 	
-	 System.out.println("To check that user can Buy Product immediately");
+	 System.out.println("TC007_To check that user can Buy Product immediately");
+	 test=extent.createTest("TC007_To check that user can Buy Product immediately");
      HP =new HomePage(driver);
      HP.YourOrdersPage();
      OP = new OrderPage(driver);
@@ -130,7 +175,8 @@ public class OrderHistoryTest {
  @Test(priority=6)
  public void AddtoCartTest() {
 	
-	 System.out.println("To check that user can Add product to Cart");
+	 System.out.println("TC006_To check that user can Add product to Cart");
+	 test=extent.createTest("TC006_To check that user can Add product to Cart");
      HP =new HomePage(driver);
      
      OP = new OrderPage(driver);
@@ -146,7 +192,8 @@ public class OrderHistoryTest {
 @Test(priority=5,dataProvider="FilterOrder")
 public void Filters(String Filter, String ExpectedSearchFilterText)
   {
-   System.out.println("To search orders using Filters");
+   System.out.println("TC005_To search orders using Filters" + "_" + Filter);
+   test=extent.createTest("TC005_To search orders using Filters" + "_" + Filter);
   
    SOR = new SearchOrderResults(driver);
    OP = new OrderPage(driver);
@@ -165,9 +212,23 @@ public void Filters(String Filter, String ExpectedSearchFilterText)
   
   @AfterMethod
   
-  public void screenshots() {
-	 
-//	  logger.info("*****Text Case Ended*****");	 	 
+  public void CheckResults(ITestResult Results) {
+	if(Results.getStatus()==ITestResult.FAILURE) {
+		test.log(Status.FAIL, "Test case is failed due to below problem");
+		test.log(Status.FAIL,Results.getThrowable());
+	}else if (Results.getStatus()==ITestResult.SUCCESS) {
+	
+		test.log(Status.PASS, "Test case is Pass");
+	}else {
+		test.log(Status.SKIP,Results.getThrowable());
+	}
+ 	 
+  }
+  
+  @AfterTest
+  
+  public void teardown() {
+	  extent.flush();
   }
   
   @DataProvider
@@ -198,7 +259,7 @@ public void Filters(String Filter, String ExpectedSearchFilterText)
   public void afterClass() {
 	  
 	  driver.quit(); 
-	  driver.manage().deleteAllCookies();
+	  
   }
 
   
